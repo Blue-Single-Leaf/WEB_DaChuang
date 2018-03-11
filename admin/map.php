@@ -1,0 +1,108 @@
+<?php 
+session_start();
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link type="text/css" href="../css/mb.css"  rel="stylesheet" />
+<title>大创数据展示平台</title>
+<!--百度地图密钥:GjVjUaTgRSfmQ2u4ZqW8kS9MojwCzvZ4-->
+</head>
+<body>
+<div id = "top_div">
+	<div id = "myTitle">
+    	<span id = "titleContent" ><span id =  "important">&nbsp;&nbsp;大创</span>&nbsp;&nbsp;数据展示平台</span>
+    </div>
+    <div id = "userInfo">
+    	<img src="../images/用户图标1.jpg" id = "userImg" />
+        <span id = "userWelcome">Welcome &nbsp;&nbsp;&nbsp;&nbsp;<span id = "username"><?php 
+		if(isset($_SESSION['username'])) echo $_SESSION['username'];
+		else echo "张三";?></span></span>
+    </div>
+</div>
+<div id = "mid_div">
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=GjVjUaTgRSfmQ2u4ZqW8kS9MojwCzvZ4&s=1"></script>
+<script type="text/javascript">
+var map = new BMap.Map("mid_div");    // 创建Map实例
+	//4bc188893c96c6b75bb80419ffe36a81', (125.29869404123593, 43.78577590309273), '新浪微博')
+
+	var x = 125.29869404123593;
+	var y = 43.78577590309273;
+	var app = "新浪微博";
+	var user = "4bc188893c96c6b75bb80419ffe36a81";
+	var mypoint = new BMap.Point(x,y)
+	//var mypoint = new BMap.Point(125.35,43.88);
+	map.centerAndZoom(mypoint, 11);  // 初始化地图,设置中心点坐标和地图级别
+	map.addControl(new BMap.MapTypeControl());   //添加地图类型控件
+	//map.setCurrentCity("长春");          // 设置地图显示的城市 此项是必须设置的
+	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+	map.addControl(new BMap.ScaleControl());
+	var marker;
+	/*var marker = new BMap.Marker(mypoint);
+        map.addOverlay(marker);*/
+       // var label = new BMap.Label("sjfsjf",{offset:new BMap.Size(20,-10)});
+        //marker.setLabel(label); //添加百度label
+	translateCallback = function (data){
+      if(data.status === 0) {
+        marker = new BMap.Marker(data.points[0]);
+        map.addOverlay(marker);
+		var label = new BMap.Label(app,	{offset:new BMap.Size(20,-10)});
+		marker.setTitle(user);
+		marker.addEventListener("mouseover",disInfo);
+		marker.addEventListener("mouseout",outInfo);
+        /*var label = new BMap.Label("转换后的百度坐标（正确）",{offset:new BMap.Size(20,-10)});
+        marker.setLabel(label); //添加百度label*/
+        map.setCenter(data.points[0]);
+      }
+    }
+	dis = function(data){
+		if(data.status === 0) {
+			var label = new BMap.Label("显示的内容：",	{offset:new BMap.Size(20,-10)});
+			marker.setLabel(label);
+		}
+		
+	}
+	function disInfo()
+	{
+		var label = new BMap.Label(app,	{offset:new BMap.Size(20,-10)});
+			marker.setLabel(label);
+			/*
+		var convertor = new BMap.Convertor();
+        var pointArr = [];
+        pointArr.push(mypoint);
+        convertor.translate(pointArr, 1, 5, dis);*/
+	}
+	function outInfo()
+	{
+		map.removeOverlay(marker);
+		map.addOverlay(marker);
+		//var label = new BMap.Label(app,	{offset:new BMap.Size(20,-10)});
+		marker.setTitle(user);
+		marker.addEventListener("mouseover",disInfo);
+		marker.addEventListener("mouseout",outInfo);
+		
+	}
+    setTimeout(function(){
+        var convertor = new BMap.Convertor();
+        var pointArr = [];
+        pointArr.push(mypoint);
+        convertor.translate(pointArr, 1, 5, translateCallback)
+    }, 1000);
+</script>
+</div>
+<div id = "bottom_div">
+	<div id = "project1">
+    	<img src="../images/火影忍者.jpeg" id = "project1Img" />
+        <span id = "project1Font"><a href="appInfo">用户推荐app</a></span>
+    </div>
+    <div id = "project2">
+    	<img src="../images/火影忍者.jpeg" id = "project2Img" />
+        <span id = "project2Font"><a href = "">地图热点</a></span>
+    </div>
+</div>
+<div id = "intro_div">
+	<div id = "ss">吉林大学南湖校区刘坤大创小组--@版权所有</div>
+</div>
+</body>
+</html>
